@@ -1,5 +1,6 @@
 require 'slack-ruby-client'
 require './models/formula1_news'
+require './models/new'
 
 class PostNewsToSlack
   def self.post
@@ -8,8 +9,11 @@ class PostNewsToSlack
 
   def post
     article = Formula1News.articles.last
+    return false if New.find_by(url: article["url"]).present?
+
     message = "<#{article["url"]}|#{article["title"]}>"
     send_message(content: message)
+    New.create(url: article["url"], title: article["title"])
   end
 
   private

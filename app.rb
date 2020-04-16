@@ -1,14 +1,31 @@
+require 'rubygems'
 require 'sinatra'
+require './config/environment'
 require './models/post_news_to_slack'
+require './models/new'
 
 get '/' do
   'Hello world!'
 end
 
 get '/post' do
-  PostNewsToSlack.post
-  'Posted to slack!'
+  if PostNewsToSlack.post
+    'Posted to slack!'
+  else
+    'Already posted'
+  end
 end
+
+get '/list' do
+  news = New.all
+  news.map { |n| "#{n.title}: #{n.url}" }.join("<br>")
+end
+
+get '/test' do
+  New.create(title: "alo", url: "www.somethin.com")
+  "all good!"
+end
+
 
 # get '/auth' do
 #   client_id = '1052655198181.1050480329478'
